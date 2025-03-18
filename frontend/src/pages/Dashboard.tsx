@@ -31,9 +31,6 @@ interface DashboardProps {
   currentDataset: any;
 }
 
-function updateEquipmentData() {
-    throw new Error('Function not implemented.');
-}
 
 
 const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
