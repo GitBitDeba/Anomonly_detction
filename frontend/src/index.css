@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  body {
+    @apply font-sans text-gray-800 dark:text-gray-200;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500;
+  }
+  
+  .btn-outline {
+    @apply btn border-2 border-gray-300 hover:bg-gray-100 focus:ring-gray-300 dark:border-gray-600 dark:hover:bg-gray-700;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-card p-6 transition-all duration-200;
+  }
+  
+  .input {
+    @apply w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 
+           focus:outline-none focus:ring-2 focus:ring-primary-500 dark:text-white transition-all duration-200;
+  }
+  
+  .animate-enter {
+    @apply transition duration-300 ease-out transform -translate-y-4 opacity-0;
+  }
+  
+  .animate-enter-active {
+    @apply translate-y-0 opacity-100;
+  }
+
+  .animate-exit {
+    @apply transition duration-300 ease-in transform translate-y-0 opacity-100;
+  }
+  
+  .animate-exit-active {
+    @apply -translate-y-4 opacity-0;
+  }
+  
+  .divider {
+    @apply h-px w-full bg-gray-200 dark:bg-gray-700 my-8;
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Dashboard specific styles */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.chart-container {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-card overflow-hidden transition-all duration-300;
+}
+
+.chart-container:hover {
+  @apply shadow-lg transform -translate-y-1;
+}
+
+.chart-header {
+  @apply flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700;
+}
+
+/* Anomaly indication styles */
+.anomaly-indicator {
+  @apply transition-all duration-500;
+}
+
+.anomaly-indicator.warning {
+  @apply text-warning;
+}
+
+.anomaly-indicator.danger {
+  @apply text-danger animate-pulse;
+}
+
+.anomaly-indicator.normal {
+  @apply text-success;
+}
