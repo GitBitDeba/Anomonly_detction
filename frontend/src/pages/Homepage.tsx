@@ -31,155 +31,201 @@ const Homepage = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary-900 to-primary-800 text-white">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={containerVariants}
-            >
-              <motion.h1 
-                variants={itemVariants}
-                className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight"
-              >
-                Advanced Anomaly Detection for Industrial Systems
-              </motion.h1>
-              <motion.p 
-                variants={itemVariants}
-                className="mt-6 text-lg md:text-xl text-blue-100 max-w-xl"
-              >
-                Detect equipment failures before they happen with our cutting-edge machine learning algorithms. Monitor in real-time or analyze historical data.
-              </motion.p>
-              <motion.div 
-                variants={itemVariants}
-                className="mt-10 flex flex-col sm:flex-row gap-4"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/upload')}
-                  className="btn-secondary bg-white text-primary-700 hover:bg-blue-50"
-                >
-                  Upload Dataset
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/connect')}
-                  className="btn-outline border-white text-white hover:bg-white/10"
-                >
-                  Connect Hardware
-                </motion.button>
-              </motion.div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="relative hidden lg:block"
-            >
-              <div className="w-full h-80 relative">
-                <motion.div 
-                  animate={{ y: [0, -10, 0] }} 
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-2xl shadow-xl"
-                >
-                  <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
-                    <path d="M0,50 C0,22.3857625 22.3857625,0 50,0 C77.6142375,0 100,22.3857625 100,50 C100,77.6142375 77.6142375,100 50,100 C22.3857625,100 0,77.6142375 0,50 Z" fill="none" stroke="currentColor" strokeWidth="2"></path>
-                    <path d="M0,50 C0,77.6142375 22.3857625,100 50,100 C77.6142375,100 100,77.6142375 100,50 C100,22.3857625 77.6142375,0 50,0 C22.3857625,0 0,22.3857625 0,50 Z" fill="none" stroke="currentColor" strokeWidth="2"></path>
-                    <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" strokeWidth="2"></circle>
-                  </svg>
-                </motion.div>
-                
-                <motion.div 
-                  animate={{ y: [0, 10, 0] }} 
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                  className="absolute bottom-0 left-0 w-56 h-56 bg-gradient-to-tr from-accent-500 to-accent-400 rounded-2xl shadow-xl"
-                >
-                  <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="2"></rect>
-                    <rect x="25" y="25" width="50" height="50" fill="none" stroke="currentColor" strokeWidth="2"></rect>
-                    <rect x="40" y="40" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"></rect>
-                  </svg>
-                </motion.div>
-                
-                <motion.div 
-                  animate={{ y: [0, -8, 0] }} 
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className="absolute top-10 left-20 w-48 h-48 bg-gradient-to-bl from-primary-400 to-primary-600 rounded-2xl shadow-xl"
-                >
-                  <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="2"></circle>
-                    <path d="M50,5 L50,95" stroke="currentColor" strokeWidth="2"></path>
-                    <path d="M5,50 L95,50" stroke="currentColor" strokeWidth="2"></path>
-                  </svg>
-                </motion.div>
-                
-                {/* Dashboard preview floating above the shapes */}
-                <motion.div 
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.7 }}
-                >
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden w-full max-w-md">
-                    <div className="p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                      </div>
-                      <div className="text-xs font-medium text-gray-500 dark:text-gray-400">Dashboard Preview</div>
-                    </div>
-                    <div className="p-4">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                          <div className="h-16 bg-gradient-to-r from-blue-400 to-blue-500 rounded-md"></div>
-                          <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full w-3/4"></div>
-                        </div>
-                        <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                          <div className="h-16 bg-gradient-to-r from-green-400 to-green-500 rounded-md"></div>
-                          <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full w-1/2"></div>
-                        </div>
-                        <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                          <div className="h-16 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-md"></div>
-                          <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full w-2/3"></div>
-                        </div>
-                        <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-                          <div className="h-16 bg-gradient-to-r from-red-400 to-red-500 rounded-md"></div>
-                          <div className="mt-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full w-5/6"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-        
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
-            <path fill="#ffffff" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-          </svg>
-        </div>
-      </section>
+<section className="relative overflow-hidden bg-gradient-to-b from-primary-900 to-primary-800 text-white">
+  {/* Background pattern - enhanced to cover the whole section with movement */}
+  <div className="absolute inset-0 opacity-10">
+    <motion.div
+      animate={{ x: [0, -20] }}
+      transition={{ repeat: Infinity, duration: 60, ease: "linear" }}
+      className="w-full h-full"
+    >
+      <svg className="w-[200%] h-full" width="200%" height="100%" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="200%" height="100%" fill="url(#grid)" />
+      </svg>
+    </motion.div>
+  </div>
+  
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <motion.h1 
+          variants={itemVariants}
+          className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight"
+        >
+          Advanced Anomaly Detection for Industrial Systems
+        </motion.h1>
+        <motion.p 
+          variants={itemVariants}
+          className="mt-6 text-lg md:text-xl text-blue-100 max-w-xl"
+        >
+          Detect equipment failures before they happen with our cutting-edge machine learning algorithms. Monitor in real-time or analyze historical data.
+        </motion.p>
+        <motion.div 
+          variants={itemVariants}
+          className="mt-10 flex flex-col sm:flex-row gap-4"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/upload')}
+            className="btn-secondary bg-white text-black hover:bg-white/800"
+          >
+            Upload Dataset
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/connect')}
+            className="btn-outline border-white text-black hover:bg-white/10"
+          >
+            Connect Hardware
+          </motion.button>
+        </motion.div>
+      </motion.div>
       
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, delay: 0.3 }}
+        className="relative hidden lg:block"
+      >
+        <div className="w-full h-80 relative">
+          {/* Original moving square */}
+          <motion.div 
+            animate={{ y: [0, -10, 0] }} 
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-2xl shadow-xl"
+          >
+            <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
+              <path d="M0,50 C0,22.3857625 22.3857625,0 50,0 C77.6142375,0 100,22.3857625 100,50 C100,77.6142375 77.6142375,100 50,100 C22.3857625,100 0,77.6142375 0,50 Z" fill="none" stroke="currentColor" strokeWidth="2"></path>
+              <path d="M0,50 C0,77.6142375 22.3857625,100 50,100 C77.6142375,100 100,77.6142375 100,50 C100,22.3857625 77.6142375,0 50,0 C22.3857625,0 0,22.3857625 0,50 Z" fill="none" stroke="currentColor" strokeWidth="2"></path>
+              <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" strokeWidth="2"></circle>
+            </svg>
+          </motion.div>
+          
+          {/* Original moving rectangle */}
+          <motion.div 
+            animate={{ y: [0, 10, 0] }} 
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            className="absolute bottom-0 left-0 w-56 h-56 bg-gradient-to-tr from-accent-500 to-accent-400 rounded-2xl shadow-xl"
+          >
+            <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
+              <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="2"></rect>
+              <rect x="25" y="25" width="50" height="50" fill="none" stroke="currentColor" strokeWidth="2"></rect>
+              <rect x="40" y="40" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"></rect>
+            </svg>
+          </motion.div>
+          
+          {/* Original moving circle */}
+          <motion.div 
+            animate={{ y: [0, -8, 0] }} 
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute top-10 left-20 w-48 h-48 bg-gradient-to-bl from-primary-400 to-primary-600 rounded-2xl shadow-xl"
+          >
+            <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="2"></circle>
+              <path d="M50,5 L50,95" stroke="currentColor" strokeWidth="2"></path>
+              <path d="M5,50 L95,50" stroke="currentColor" strokeWidth="2"></path>
+            </svg>
+          </motion.div>
+          
+          {/* New animated triangle */}
+          <motion.div 
+            animate={{ 
+              y: [0, 15, 0],
+              rotate: [0, 10, 0]
+            }} 
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+            className="absolute top-40 right-20 w-40 h-40 bg-gradient-to-tl from-blue-400 to-indigo-600 rounded-2xl shadow-xl"
+          >
+            <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
+              <polygon points="50,10 90,90 10,90" fill="none" stroke="currentColor" strokeWidth="2" />
+              <polygon points="50,30 70,70 30,70" fill="none" stroke="currentColor" strokeWidth="2" />
+            </svg>
+          </motion.div>
+          
+          {/* New animated hexagon */}
+          <motion.div 
+            animate={{ 
+              x: [0, -10, 0],
+              rotate: [0, -5, 0]
+            }} 
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+            className="absolute top-5 left-5 w-36 h-36 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-xl"
+          >
+            <svg className="absolute inset-0 w-full h-full text-white opacity-20" viewBox="0 0 100 100">
+              <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="none" stroke="currentColor" strokeWidth="2" />
+              <polygon points="50,30 70,40 70,60 50,70 30,60 30,40" fill="none" stroke="currentColor" strokeWidth="2" />
+            </svg>
+          </motion.div>
+          
+          {/* Dashboard preview floating above the shapes */}
+          <motion.div 
+            className="absolute inset-0 flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.7 }}
+          >
+            <div className="bg-gray-800 rounded-xl shadow-2xl overflow-hidden w-full max-w-md">
+              <div className="p-4 bg-gray-900 border-b border-gray-700 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div className="text-xs font-medium text-gray-400">Dashboard Preview</div>
+              </div>
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-gray-700 p-2 rounded-lg">
+                    <div className="h-16 bg-gradient-to-r from-blue-400 to-blue-500 rounded-md"></div>
+                    <div className="mt-2 h-2 bg-gray-600 rounded-full w-3/4"></div>
+                  </div>
+                  <div className="bg-gray-700 p-2 rounded-lg">
+                    <div className="h-16 bg-gradient-to-r from-green-400 to-green-500 rounded-md"></div>
+                    <div className="mt-2 h-2 bg-gray-600 rounded-full w-1/2"></div>
+                  </div>
+                  <div className="bg-gray-700 p-2 rounded-lg">
+                    <div className="h-16 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-md"></div>
+                    <div className="mt-2 h-2 bg-gray-600 rounded-full w-2/3"></div>
+                  </div>
+                  <div className="bg-gray-700 p-2 rounded-lg">
+                    <div className="h-16 bg-gradient-to-r from-red-400 to-red-500 rounded-md"></div>
+                    <div className="mt-2 h-2 bg-gray-600 rounded-full w-5/6"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+  
+  {/* Wave divider */}
+  <div className="absolute bottom-0 left-0 right-0">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
+      <path fill="#1f2937" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+</section>
+
+{/* 
+  TODO Point 2: Convert the whole website to dark theme
+
+  TODO Point 3: Improve button styling to be more visible and match the theme
+
+  TODO Point 4: Add hover effects to "How it works" section and improve the circle styling
+*/}
       {/* Features Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -367,7 +413,7 @@ const Homepage = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/upload')}
-                className="btn-secondary bg-white text-primary-700 hover:bg-blue-50"
+                className="btn-secondary bg-blue text-primary-700 hover:bg-blue-50"
               >
                 Upload Dataset
               </motion.button>
@@ -411,7 +457,7 @@ const WorkflowStep = ({ number, title, description }: { number: string; title: s
     variants={itemVariants}
       className="mb-10 ml-6"
     >
-      <div className="absolute -left-4 mt-1.5 flex items-center justify-center w-7 h-7 bg-primary-600 rounded-full ring-8 ring-white">
+      <div className="absolute -left-4 mt-1.5 flex items-center justify-center w-7 h-7 bg-primary-600 rounded-full ring-6 ring-black">
         <span className="text-xs font-medium text-white">{number}</span>
       </div>
       <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
