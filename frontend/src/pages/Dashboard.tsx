@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useRef } from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { motion } from 'framer-motion';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -70,7 +73,7 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
   const [featureImportance, setFeatureImportance] = useState<{ name: string, value: number }[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<string>('1d'); // '1h', '1d', '1w', '1m'
-
+  const dashboardRef = useRef(null);
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -95,69 +98,58 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
   };
   
 // Add this function inside your Dashboard component
-const generateReportData = () => {
-  // Create timestamp for the filename
+const handleDownloadPDFReport = () => {
+  if (!dashboardRef.current) return;
+  
+  // Show a simple alert that we're generating the PDF
+  alert("Generating PDF report... This may take a few seconds.");
+  
+  // Get current timestamp for filename
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const filename = `anomaly-report-${timestamp}.pdf`;
   
-  // Create report title and basic info
-  let reportContent = `Anomaly Detection Report - ${timestamp}\n\n`;
-  
-  // Add dataset information
-  reportContent += `Dataset: ${currentDataset ? currentDataset.name : 'Hardware Monitoring'}\n`;
-  reportContent += `Records: ${runInfo.totalPoints.toLocaleString()}\n`;
-  reportContent += `Anomalies Found: ${runInfo.anomaliesFound.toLocaleString()} (${((runInfo.anomaliesFound / runInfo.totalPoints) * 100).toFixed(1)}%)\n\n`;
-  
-  // Add equipment data
-  reportContent += `=== MONITORED PARAMETERS ===\n\n`;
-  equipments.forEach((equipment) => {
-    reportContent += `${equipment.name}\n`;
-    reportContent += `Current Value: ${equipment.currentValue.toFixed(2)}\n`;
-    reportContent += `Status: ${equipment.status}\n`;
-    reportContent += `Normal Range: ${equipment.normalRange.min.toFixed(1)} - ${equipment.normalRange.max.toFixed(1)}\n\n`;
+  // Capture the dashboard as an image
+  html2canvas(dashboardRef.current, {
+    scale: 2,
+    useCORS: true,
+    allowTaint: true
+  }).then(canvas => {
+    // Create PDF document
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    
+    // Add title
+    pdf.setFontSize(18);
+    pdf.text("Anomaly Detection Report", 14, 15);
+    
+    // Add timestamp
+    pdf.setFontSize(10);
+    pdf.text(`Generated: ${new Date().toLocaleString()}`, 14, 22);
+    
+    // Add dataset info
+    pdf.setFontSize(12);
+    pdf.text(`Dataset: ${currentDataset ? currentDataset.name : 'Hardware Monitoring'}`, 14, 32);
+    pdf.text(`Records: ${runInfo.totalPoints.toLocaleString()}`, 14, 38);
+    pdf.text(`Anomalies: ${runInfo.anomaliesFound.toLocaleString()}`, 14, 44);
+    
+    // Get the dashboard canvas as an image
+    const imgData = canvas.toDataURL('image/jpeg');
+    
+    // Calculate dimensions to fit the page
+    const imgWidth = 190; // mm, A4 width minus margins
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    
+    // Add the dashboard image to the PDF
+    pdf.addImage(imgData, 'JPEG', 10, 55, imgWidth, imgHeight);
+    
+    // Save the PDF
+    pdf.save(filename);
+    
+    alert("Report downloaded successfully!");
+  }).catch(error => {
+    console.error("Error generating PDF:", error);
+    alert("Failed to generate report. Please try again.");
   });
-  
-  // Add feature importance data
-  reportContent += `=== FEATURE IMPORTANCE ===\n\n`;
-  featureImportance.forEach((feature, index) => {
-    reportContent += `${index + 1}. ${feature.name}: ${(feature.value * 100).toFixed(1)}%\n`;
-  });
-  
-  // Add anomaly distribution
-  reportContent += `\n=== ANOMALY DISTRIBUTION ===\n\n`;
-  reportContent += `Normal: ${anomalyDistribution.normal.toLocaleString()}\n`;
-  reportContent += `Warning: ${anomalyDistribution.warning.toLocaleString()}\n`;
-  reportContent += `Anomaly: ${anomalyDistribution.anomaly.toLocaleString()}\n`;
-  
-  return {
-    content: reportContent,
-    filename: `anomaly-report-${timestamp}.txt`
-  };
-};
-
-// Add this function to handle the download
-const handleDownloadReport = () => {
-  const report = generateReportData();
-  
-  // Create a blob from the report content
-  const blob = new Blob([report.content], { type: 'text/plain' });
-  
-  // Create a URL for the blob
-  const url = URL.createObjectURL(blob);
-  
-  // Create a temporary anchor element to trigger the download
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = report.filename;
-  document.body.appendChild(a);
-  a.click();
-  
-  // Clean up
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 100);
-};
-  // Initialize dashboard with dataset or connected hardware data
+};  // Initialize dashboard with dataset or connected hardware data
   useEffect(() => {
     if (isConnected) {
       // Generate sample data for hardware connection
@@ -516,7 +508,7 @@ const handleDownloadReport = () => {
   ];
   
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" ref={dashboardRef}>
       {/* Dashboard Header */}
       <motion.div 
         initial="hidden"
@@ -1024,7 +1016,7 @@ const handleDownloadReport = () => {
           </button>
           
           <button 
-  onClick={handleDownloadReport}
+  onClick={handleDownloadPDFReport}
   className="px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-md hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-primary-400 dark:border-primary-500 dark:hover:bg-gray-750 dark:focus:ring-offset-gray-900"
 >
   Download Report
