@@ -1,4 +1,4 @@
-import { useEffect, useState,useRef  } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -93,28 +93,70 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
       }
     }
   };
-  const handleDownloadReport = () => {
-    const report = generateReportData();
-    
-    // Create a blob from the report content
-    const blob = new Blob([report.content], { type: 'text/plain' });
-    
-    // Create a URL for the blob
-    const url = URL.createObjectURL(blob);
-    
-    // Create a temporary anchor element to trigger the download
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = report.filename;
-    document.body.appendChild(a);
-    a.click();
-    
-    // Clean up
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
+  
+// Add this function inside your Dashboard component
+const generateReportData = () => {
+  // Create timestamp for the filename
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  
+  // Create report title and basic info
+  let reportContent = `Anomaly Detection Report - ${timestamp}\n\n`;
+  
+  // Add dataset information
+  reportContent += `Dataset: ${currentDataset ? currentDataset.name : 'Hardware Monitoring'}\n`;
+  reportContent += `Records: ${runInfo.totalPoints.toLocaleString()}\n`;
+  reportContent += `Anomalies Found: ${runInfo.anomaliesFound.toLocaleString()} (${((runInfo.anomaliesFound / runInfo.totalPoints) * 100).toFixed(1)}%)\n\n`;
+  
+  // Add equipment data
+  reportContent += `=== MONITORED PARAMETERS ===\n\n`;
+  equipments.forEach((equipment) => {
+    reportContent += `${equipment.name}\n`;
+    reportContent += `Current Value: ${equipment.currentValue.toFixed(2)}\n`;
+    reportContent += `Status: ${equipment.status}\n`;
+    reportContent += `Normal Range: ${equipment.normalRange.min.toFixed(1)} - ${equipment.normalRange.max.toFixed(1)}\n\n`;
+  });
+  
+  // Add feature importance data
+  reportContent += `=== FEATURE IMPORTANCE ===\n\n`;
+  featureImportance.forEach((feature, index) => {
+    reportContent += `${index + 1}. ${feature.name}: ${(feature.value * 100).toFixed(1)}%\n`;
+  });
+  
+  // Add anomaly distribution
+  reportContent += `\n=== ANOMALY DISTRIBUTION ===\n\n`;
+  reportContent += `Normal: ${anomalyDistribution.normal.toLocaleString()}\n`;
+  reportContent += `Warning: ${anomalyDistribution.warning.toLocaleString()}\n`;
+  reportContent += `Anomaly: ${anomalyDistribution.anomaly.toLocaleString()}\n`;
+  
+  return {
+    content: reportContent,
+    filename: `anomaly-report-${timestamp}.txt`
   };
+};
+
+// Add this function to handle the download
+const handleDownloadReport = () => {
+  const report = generateReportData();
+  
+  // Create a blob from the report content
+  const blob = new Blob([report.content], { type: 'text/plain' });
+  
+  // Create a URL for the blob
+  const url = URL.createObjectURL(blob);
+  
+  // Create a temporary anchor element to trigger the download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = report.filename;
+  document.body.appendChild(a);
+  a.click();
+  
+  // Clean up
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
+};
   // Initialize dashboard with dataset or connected hardware data
   useEffect(() => {
     if (isConnected) {
