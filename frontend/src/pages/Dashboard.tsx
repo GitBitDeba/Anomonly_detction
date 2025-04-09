@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef  } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -93,7 +93,28 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
       }
     }
   };
-
+  const handleDownloadReport = () => {
+    const report = generateReportData();
+    
+    // Create a blob from the report content
+    const blob = new Blob([report.content], { type: 'text/plain' });
+    
+    // Create a URL for the blob
+    const url = URL.createObjectURL(blob);
+    
+    // Create a temporary anchor element to trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = report.filename;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
   // Initialize dashboard with dataset or connected hardware data
   useEffect(() => {
     if (isConnected) {
@@ -961,10 +982,11 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
           </button>
           
           <button 
-            className="px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-md hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-primary-400 dark:border-primary-500 dark:hover:bg-gray-750 dark:focus:ring-offset-gray-900"
-          >
-            Download Report
-          </button>
+  onClick={handleDownloadReport}
+  className="px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-md hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-primary-400 dark:border-primary-500 dark:hover:bg-gray-750 dark:focus:ring-offset-gray-900"
+>
+  Download Report
+</button>
           
           {currentDataset && (
             <button 
