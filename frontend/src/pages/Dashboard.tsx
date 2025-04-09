@@ -443,8 +443,7 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
     }));
   };
   
-  // COLORS for charts
-  
+  // Removed unused COLORS constant
   
   // PIE CHART DATA
   const pieChartData = [
@@ -851,12 +850,19 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
                         dataKey="value"
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                       >
-                        {pieChartData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={
-                            index === 0 ? '#10B981' : 
-                            index === 1 ? '#F59E0B' : '#EF4444'
-                          } />
-                        ))}
+                       {pieChartData.map((_, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={
+                                    index === 0
+                                      ? '#10B981'
+                                      : index === 1
+                                      ? '#F59E0B'
+                                      : '#EF4444'
+                                  }
+                                />
+                              ))}
+
                       </Pie>
                       <Tooltip formatter={(value) => value.toLocaleString()} />
                     </PieChart>
