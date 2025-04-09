@@ -9,6 +9,9 @@ const sampleDatasets = [
   { id: 3, name: 'Power Generator', size: '1.9 MB', records: 4210, description: 'Voltage and current data from power generators with anomaly markers' }
 ];
 
+// API URL configuration - make sure to update this for production
+const API_URL = "http://localhost:8000"; // or "https://your-fastapi-backend-url.com"
+
 const Upload = ({ setCurrentDataset }: { setCurrentDataset: (data: any) => void }) => {
   const navigate = useNavigate();
   const [dragActive, setDragActive] = useState(false);
@@ -17,6 +20,7 @@ const Upload = ({ setCurrentDataset }: { setCurrentDataset: (data: any) => void 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Animation variants
@@ -72,51 +76,113 @@ const Upload = ({ setCurrentDataset }: { setCurrentDataset: (data: any) => void 
   const handleFile = (file: File) => {
     setUploadedFile(file);
     setSelectedSample(null);
+    setUploadError(null);
   };
 
   const handleSampleSelect = (id: number) => {
     setSelectedSample(id);
     setUploadedFile(null);
+    setUploadError(null);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    if (!uploadedFile && !selectedSample) return;
+  
     setIsUploading(true);
     setUploadProgress(0);
-
-    // Simulate file upload progress
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setUploadComplete(true);
-          
-          // Prepare dataset based on selection
-          let dataset;
-          if (uploadedFile) {
-            dataset = {
-              id: 'custom-' + Date.now(),
-              name: uploadedFile.name,
-              size: (uploadedFile.size / (1024 * 1024)).toFixed(1) + ' MB',
-              records: Math.floor(Math.random() * 10000) + 1000,
-              isCustom: true
-            };
-          } else if (selectedSample !== null) {
-            dataset = sampleDatasets.find(d => d.id === selectedSample);
+    setUploadComplete(false);
+    setUploadError(null);
+  
+    try {
+      // Start progress simulation
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
           }
-          
-          // Set the current dataset and navigate to dashboard
-          if (dataset) {
-            setCurrentDataset(dataset);
-            setTimeout(() => {
-              navigate('/dashboard');
-            }, 1000);
-          }
-          
-          return 100;
+          return prev + 5;
+        });
+      }, 200);
+      
+      let predictionData;
+      
+      if (uploadedFile) {
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+      
+        // Send the file to the backend API
+        const response = await fetch(`${API_URL}/predict`, {
+          method: 'POST',
+          body: formData
+        });
+      
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${await response.text()}`);
         }
-        return prev + Math.floor(Math.random() * 10) + 5;
-      });
-    }, 200);
+      
+        predictionData = await response.json();
+      } else if (selectedSample) {
+        // Handle sample dataset selection
+        // In a real app, you might fetch this from your backend
+        // Here we'll simulate with mock data
+        predictionData = await simulateSampleDataPrediction(selectedSample);
+      }
+  
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      setUploadComplete(true);
+  
+      // Organize the data for the dashboard
+      const dataset = {
+        id: uploadedFile ? 'custom-' + Date.now() : `sample-${selectedSample}`,
+        name: uploadedFile ? uploadedFile.name : sampleDatasets.find(d => d.id === selectedSample)?.name,
+        size: uploadedFile ? (uploadedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : 
+              sampleDatasets.find(d => d.id === selectedSample)?.size,
+        records: predictionData.length,
+        data: predictionData,
+        isCustom: !!uploadedFile,
+        anomaliesCount: predictionData.filter((item: any) => item.Prediction === "Failure").length
+      };
+  
+      // Set the current dataset to be used in the Dashboard
+      setCurrentDataset(dataset);
+  
+      // Navigate to dashboard after a short delay
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      setUploadError(error instanceof Error ? error.message : 'An unknown error occurred');
+      setIsUploading(false);
+    }
+  };
+
+  // Function to simulate predictions for sample datasets
+  const simulateSampleDataPrediction = async (sampleId: number) => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Generate mock prediction data based on sample ID
+    const recordCount = sampleDatasets.find(d => d.id === sampleId)?.records || 1000;
+    const sampleSize = Math.min(recordCount, 100); // Limit to 100 records for performance
+    
+    return Array.from({ length: sampleSize }, (_, i) => {
+      const isAnomaly = Math.random() > 0.85; // 15% chance of anomaly
+      return {
+        id: i,
+        timestamp: new Date(Date.now() - (sampleSize - i) * 3600000).toISOString(),
+        "Type": ["L", "M", "H"][Math.floor(Math.random() * 3)],
+        "Air temperature [K]": 290 + Math.random() * 20,
+        "Process temperature [K]": 305 + Math.random() * 15,
+        "Rotational speed [rpm]": 1000 + Math.random() * 2000,
+        "Torque [Nm]": 20 + Math.random() * 60,
+        "Tool wear [min]": Math.floor(Math.random() * 200),
+        "Prediction": isAnomaly ? "Failure" : "No Failure"
+      };
+    });
   };
 
   const openFileSelector = () => {
@@ -382,17 +448,25 @@ const Upload = ({ setCurrentDataset }: { setCurrentDataset: (data: any) => void 
             )}
           </div>
         ) : (
-          <button 
-            onClick={handleUpload}
-            disabled={!uploadedFile && selectedSample === null}
-            className={`px-8 py-3 rounded-lg font-medium text-white ${
-              !uploadedFile && selectedSample === null
-                ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
-                : 'bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600'
-            } transition-colors duration-200 shadow-lg hover:shadow-xl`}
-          >
-            Start Analysis
-          </button>
+          <>
+            {uploadError && (
+              <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg max-w-md mx-auto">
+                <p className="text-sm font-medium">Error: {uploadError}</p>
+              </div>
+            )}
+            
+            <button 
+              onClick={handleUpload}
+              disabled={!uploadedFile && selectedSample === null}
+              className={`px-8 py-3 rounded-lg font-medium text-white ${
+                !uploadedFile && selectedSample === null
+                  ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                  : 'bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600'
+              } transition-colors duration-200 shadow-lg hover:shadow-xl`}
+            >
+              Start Analysis
+            </button>
+          </>
         )}
         
         {(!uploadedFile && selectedSample === null) && (
