@@ -444,7 +444,7 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
   };
   
   // COLORS for charts
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  
   
   // PIE CHART DATA
   const pieChartData = [
@@ -851,7 +851,7 @@ const Dashboard = ({ isConnected, currentDataset }: DashboardProps) => {
                         dataKey="value"
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                       >
-                        {pieChartData.map((entry, index) => (
+                        {pieChartData.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={
                             index === 0 ? '#10B981' : 
                             index === 1 ? '#F59E0B' : '#EF4444'
