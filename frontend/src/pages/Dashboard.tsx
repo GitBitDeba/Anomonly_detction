@@ -1015,7 +1015,7 @@ const handleDownloadPDFReport = () => {
             Replay Analysis
           </button>
           
-          <button 
+        <button 
   onClick={handleDownloadPDFReport}
   className="px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-md hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-primary-400 dark:border-primary-500 dark:hover:bg-gray-750 dark:focus:ring-offset-gray-900"
 >
