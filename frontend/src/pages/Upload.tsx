@@ -10,7 +10,7 @@ const sampleDatasets = [
 ];
 
 // API URL configuration - make sure to update this for production
-const API_URL = "http://localhost:8000"; // or "https://your-fastapi-backend-url.com"
+const API_URL: string = import.meta.env.VITE_API_URL || "http://localhost:8000";// or "https://your-fastapi-backend-url.com"
 
 const Upload = ({ setCurrentDataset }: { setCurrentDataset: (data: any) => void }) => {
   const navigate = useNavigate();
